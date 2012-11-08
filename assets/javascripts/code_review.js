@@ -104,10 +104,11 @@ function setAddReviewButton(url, change_id, image_tag, is_readonly, is_diff, att
     var filetables = [];
     var j = 0;
     $('table.filecontent').each(function(){
-      var table = this
-        if($(this).find("thead th:contains('"+ path +"')")){
-            filetables[j++] = table;
-        }
+      var table = this;
+      console.debug(, path, $(this).find("thead th:contains('"+ path +"')"));
+      if($(this).find("thead th:contains('"+ path +"')")){
+        filetables[j++] = table;
+      }
     });
     addReviewUrl = url + '?change_id=' + change_id + '&action_type=' + action_type +
         '&rev=' + rev + '&path=' + encodeURIComponent(path) + '&rev_to=' + rev_to +
