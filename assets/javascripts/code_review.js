@@ -195,12 +195,13 @@ function setShowReviewButton(line, review_id, is_closed, file_count) {
 function popupReview(review_id) {
     var span   = $('#review_' + review_id); // span element of view review button
     var pos = span.offset();
-    // position and show popup dialog
-    // create popup dialog
-    var win = showReview(showReviewUrl, review_id, pos.left + 10 + 5, pos.top + 25);
-//    win.toFront();
+    try {
+      var win = showReview(showReviewUrl, review_id, pos.left + 10 + 5, pos.top + 25);
+    } catch (Exception){
+    }
+    // win.toFront();
     // scroll to line
-//    span.scrollTo(); ??
+    // span.scrollTo(); ??
 }
 
 function showReview(url, review_id, x, y) {

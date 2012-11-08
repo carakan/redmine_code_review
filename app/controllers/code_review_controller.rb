@@ -195,10 +195,8 @@ class CodeReviewController < ApplicationController
       end
     end
     @change = nil
-    @results_1 = []
     changeset.filechanges.each do |chg|
       @change = chg if ((chg.path == fullpath) || ("/#{chg.path}" == fullpath)) || (chg.path == "/#{@path}") || (params[:change_id] && params[:change_id].to_i == chg.id)
-      @results_1 << [fullpath, "/#{@path}"]
     end
 
     @changeset = changeset
