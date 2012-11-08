@@ -59,21 +59,22 @@ if project and controller and project.module_enabled?(:code_review)
           url = url_for :controller => 'code_review', :action => 'update_diff_view', :id => project, :repository_id => repository_id
           unless path.blank?
             path = url_encode(path)
-            results << [path, rev]
+            results << [path, rev, "0"]
           -%>
           <%- else
-            results = changeset.filechanges.collect {|change| [url_encode(change.path), changeset.revision]}
+            results = changeset.filechanges.collect {|change| [url_encode(change.path), changeset.revision, change.id.to_s]}
               end -%>
           <%- results.each do |result| %>
-            <div id="code_review<%= result.join("") %>">
+            <div id="code_review<%= result[2] %>">
             </div>
             <script type="text/javascript">
                 $(document).ready(function(){
-                    $('#code_review<%= result.join("") %>').load('<%=url%>', {
+                    $('#code_review<%= result[2] %>').load('<%=url%>', {
                         rev: '<%=result[1]%>',
                         path:'<%=result[0]%>',
                         review_id: '<%=review_id%>',
                         action_type:'<%=action_name%>',
+                        section_id: '<%= result[2] %>'
                         rev_to: '<%=rev_to%>'});
                 });
               </script>
