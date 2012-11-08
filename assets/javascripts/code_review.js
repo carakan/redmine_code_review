@@ -105,7 +105,7 @@ function setAddReviewButton(url, change_id, image_tag, is_readonly, is_diff, att
     var j = 0;
     $('table.filecontent').each(function(){
       var table = this;
-      console.debug(, path, $(this).find("thead th:contains('"+ path +"')"));
+      console.debug(path, $(this).find("thead th:contains('"+ path +"')"));
       if($(this).find("thead th:contains('"+ path +"')")){
         filetables[j++] = table;
       }

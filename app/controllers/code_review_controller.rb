@@ -52,7 +52,7 @@ class CodeReviewController < ApplicationController
     @reviews = CodeReview.find :all, :order => sort_clause,
       :conditions => conditions,
       :limit  =>  limit,
-      :joins => "left join #{Change.table_name} on change_id = #{Change.table_name}.id  left join #{Changeset.table_name} on #{Change.table_name}.changeset_id = #{Changeset.table_name}.id " + 
+      :joins => "left join #{Change.table_name} on change_id = #{Change.table_name}.id  left join #{Changeset.table_name} on #{Change.table_name}.changeset_id = #{Changeset.table_name}.id " +
       "left join #{Issue.table_name} on issue_id = #{Issue.table_name}.id " +
       "left join #{IssueStatus.table_name} on #{Issue.table_name}.status_id = #{IssueStatus.table_name}.id",
       :offset =>  @review_pages.current.offset
@@ -64,8 +64,8 @@ class CodeReviewController < ApplicationController
     begin
       CodeReview.transaction {
         @review = CodeReview.new
-        @review.issue = Issue.new        
-        @review.issue.safe_attributes = params[:issue] unless params[:issue].blank? 
+        @review.issue = Issue.new
+        @review.issue.safe_attributes = params[:issue] unless params[:issue].blank?
         if params[:issue] and params[:issue][:tracker_id]
           @review.issue.tracker_id = params[:issue][:tracker_id].to_i
         else
@@ -87,13 +87,13 @@ class CodeReviewController < ApplicationController
         @issue = @review.issue
 
         @parent_candidate = get_parent_candidate(@review.rev) if  @review.rev
-        
-        if request.post?          
+
+        if request.post?
           @review.issue.save!
           if @review.changeset
             @review.changeset.issues.each {|issue|
               create_relation @review, issue, @setting.issue_relation_type
-            } if @setting.auto_relation?            
+            } if @setting.auto_relation?
           elsif @review.attachment and @review.attachment.container_type == 'Issue'
             issue = Issue.find_by_id(@review.attachment.container_id)
             create_relation @review, issue, @setting.issue_relation_type if @setting.auto_relation?
@@ -113,7 +113,7 @@ class CodeReviewController < ApplicationController
         else
           change_id = params[:change_id].to_i unless params[:change_id].blank?
           @review.change = Change.find(change_id) if change_id
-          @review.line = params[:line].to_i unless params[:line].blank? 
+          @review.line = params[:line].to_i unless params[:line].blank?
           if (@review.changeset and @review.changeset.user_id)
             @review.issue.assigned_to_id = @review.changeset.user_id
           end
@@ -159,7 +159,7 @@ class CodeReviewController < ApplicationController
       changeset = change.changeset if change
     end
     attachment = Attachment.find(code[:attachment_id]) if code[:attachment_id]
-    
+
     issue = {}
     issue[:subject] = l(:code_review_requrest)
     issue[:subject] << " [#{changeset.text_tag}: #{changeset.short_comments}]" if changeset
@@ -196,7 +196,7 @@ class CodeReviewController < ApplicationController
     end
     @change = nil
     changeset.filechanges.each{|chg|
-      @change = chg if ((chg.path == fullpath) or ("/#{chg.path}" == fullpath)) or (chg.path == "/#{@path}")
+      @change = chg if ((chg.path == fullpath) || ("/#{chg.path}" == fullpath)) || (chg.path == "/#{@path}") || (params[:change_id] && params[:change_id].to_i == chg.id)
     }
 
     @changeset = changeset
@@ -205,9 +205,9 @@ class CodeReviewController < ApplicationController
 
     #render :partial => 'show_error'
     #return
-    
 
-    
+
+
     render :partial => 'update_diff_view'
   end
 
@@ -218,7 +218,7 @@ class CodeReviewController < ApplicationController
     @review = CodeReview.new
     @action_type = 'attachment'
     @attachment = Attachment.find(@attachment_id)
-    
+
     @reviews = CodeReview.find(:all, :conditions => ['attachment_id = (?) and issue_id is NOT NULL', @attachment_id])
 
     render :partial => 'update_diff_view'
@@ -229,7 +229,7 @@ class CodeReviewController < ApplicationController
     @repository = @review.repository if @review
     @assignment = CodeReviewAssignment.find(params[:assignment_id].to_i) unless params[:assignment_id].blank?
     @repository = @assignment.repository if @assignment
-    @repository_id = @review.repository_identifier 
+    @repository_id = @review.repository_identifier
     @issue = @review.issue if @review
     @allowed_statuses = @review.issue.new_statuses_allowed_to(User.current) if @review
     target = @review if @review
@@ -249,7 +249,7 @@ class CodeReviewController < ApplicationController
         url << '?review_id=' + @review.id.to_s if @review
         redirect_to(url)
       else
-        url = url_for(:controller => 'repositories', :action => action_name, :id => @project, 
+        url = url_for(:controller => 'repositories', :action => action_name, :id => @project,
           :repository_id => @repository_id, :rev => target.revision, :path => path)
         #url = url_for(:controller => 'repositories', :action => action_name, :id => @project, :repository_id => @repository_id) + path + '?rev=' + target.revision
         url << '?review_id=' + @review.id.to_s + rev_to if @review
@@ -273,7 +273,7 @@ class CodeReviewController < ApplicationController
         # Only send notification if something was actually changed
         flash[:notice] = l(:notice_successful_update)
       end
-      
+
       render :partial => 'show'
     rescue ActiveRecord::StaleObjectError
       # Optimistic locking exception
@@ -321,7 +321,7 @@ class CodeReviewController < ApplicationController
     rev = params[:rev]
     changesets = @repository.latest_changesets(path, rev, Setting.repository_log_display_limit.to_i)
     change = changesets[0]
-   
+
     identifier = change.identifier
     redirect_to url_for(:controller => 'repositories', :action => 'entry', :id => @project, :repository_id => @repository_id) + '/' + path + '?rev=' + identifier.to_s
 
@@ -343,7 +343,7 @@ class CodeReviewController < ApplicationController
     }
     render :partial => 'update_revisions'
   end
-  
+
   private
   def find_repository
     if params[:repository_id].present? and @project.repositories
@@ -353,7 +353,7 @@ class CodeReviewController < ApplicationController
     end
     @repository_id = @repository.identifier_param if @repository.respond_to?("identifier_param")
   end
-  
+
   def find_project
     # @project variable must be set before calling the authorize filter
     @project = Project.find(params[:id])
@@ -375,7 +375,7 @@ class CodeReviewController < ApplicationController
     }
     nil
   end
-  
+
   def create_relation(review, issue, type)
     return unless issue.project == @project
     relation = IssueRelation.new
