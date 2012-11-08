@@ -178,7 +178,7 @@ class CodeReviewController < ApplicationController
     @review = CodeReview.new
     @rev = params[:rev] unless params[:rev].blank?
     @rev_to = params[:rev_to] unless params[:rev_to].blank?
-    @path = params[:path]
+    @path = URI.unscape(params[:path])
     @action_type = params[:action_type]
     changeset = @repository.find_changeset_by_name(@rev)
 
