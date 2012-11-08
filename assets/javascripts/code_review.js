@@ -120,7 +120,6 @@ function setAddReviewButton(url, change_id, image_tag, is_readonly, is_diff, att
     for (i = 0, tl = filetables.length; i < tl; i++) {
         var table = filetables[i];
         var trs = table.getElementsByTagName('tr');
-        console.debug(i, table, change_id, path);
         for (j = 0,l = trs.length; j < l; j++) {
             var tr = trs[j];
             var ths = tr.getElementsByTagName('th');
@@ -143,7 +142,6 @@ function setAddReviewButton(url, change_id, image_tag, is_readonly, is_diff, att
                 span_html += image_tag;
             }
             span_html += '</span>';
-            console.debug("this add", th, th_html + span_html);
             th.innerHTML = th_html + span_html;
 
             var img = th.getElementsByTagName('img')[0];
