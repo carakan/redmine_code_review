@@ -105,7 +105,7 @@ function setAddReviewButton(url, change_id, image_tag, is_readonly, is_diff, att
     var j = 0;
     $('table.filecontent').each(function(){
       var table = this;
-      if($(this).find("thead th:contains('"+ path +"')")){
+      if($(this).find("thead th:contains('"+ path +"')").size() > 0){
         filetables[j++] = table;
       }
     });
@@ -120,7 +120,7 @@ function setAddReviewButton(url, change_id, image_tag, is_readonly, is_diff, att
     for (i = 0, tl = filetables.length; i < tl; i++) {
         var table = filetables[i];
         var trs = table.getElementsByTagName('tr');
-        console.debug(i, table);
+        console.debug(i, table, change_id, path);
         for (j = 0,l = trs.length; j < l; j++) {
             var tr = trs[j];
             var ths = tr.getElementsByTagName('th');
