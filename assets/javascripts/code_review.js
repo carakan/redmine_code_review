@@ -54,7 +54,7 @@ function UpdateRepositoryView(title) {
     header.append(th);
     $('tr.changeset td.id a').each(function(i){
         var revision = this.getAttribute("href");
-        revision = revision.substr(revision.lastIndexOf("/") + 1);        
+        revision = revision.substr(revision.lastIndexOf("/") + 1);
         var review = review_counts['revision_' + revision];
         var td = $('<td/>',{
             'class':'progress'
@@ -100,12 +100,13 @@ function UpdateRevisionView() {
     });
 }
 
-function setAddReviewButton(url, change_id, image_tag, is_readonly, is_diff, attachment_id){
+function setAddReviewButton(url, change_id, image_tag, is_readonly, is_diff, attachment_id, path){
     var filetables = [];
     var j = 0;
-    $('table').each(function(){
-        if($(this).hasClass('filecontent')){
-            filetables[j++] = this;
+    $('table.filecontent').each(function(){
+      var table = this
+        if($(this).find("thead th:contains('"+ path +"')")){
+            filetables[j++] = table;
         }
     });
     addReviewUrl = url + '?change_id=' + change_id + '&action_type=' + action_type +
@@ -259,7 +260,7 @@ function addReview(url) {
 function deleteReview(review_id) {
     $('show_review_' + review_id).remove();
     $('review_' + review_id).remove();
-    
+
 }
 
 function changeImage(review_id, is_closed) {
