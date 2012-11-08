@@ -62,7 +62,7 @@ if project and controller and project.module_enabled?(:code_review)
             results << [path, rev]
           -%>
           <%- else
-            results << changeset.filechanges.collect {|change| [url_encode(change.path), changeset.revision]}
+            results = changeset.filechanges.collect {|change| [url_encode(change.path), changeset.revision]}
               end -%>
           <%- results.each do |result| %>
             <div id="code_review">
